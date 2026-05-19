@@ -1,33 +1,7 @@
+
 #!/bin/bash
+
 set -e
 
-# JupyterHub
-pip install --no-cache-dir jupyterhub==5.2.1
+echo "LC logger files prepared"
 
-# Jupyter
-pip install --no-cache-dir notebook jupyterlab
-
-# ===== LCログ（ここが追加）=====
-pip install --no-cache-dir ipython
-
-mkdir -p /srv/conda/envs/notebook/etc/ipython/startup
-
-cat > /srv/conda/envs/notebook/etc/ipython/startup/00-log.py <<'PY'
-import os, datetime
-
-log_dir = os.path.expanduser("~/.log")
-os.makedirs(log_dir, exist_ok=True)
-
-log_file = os.path.join(log_dir, "exec.log")
-
-def pre_run_cell(info):
-    with open(log_file, "a") as f:
-        f.write(f"\n=== {datetime.datetime.now()} ===\n")
-        f.write(info.raw_cell + "\n")
-
-ip = get_ipython()
-if ip:
-    ip.events.register('pre_run_cell', pre_run_cell)
-PY
-
-echo "LC logger installed"
