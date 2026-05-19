@@ -1,16 +1,33 @@
 #!/bin/bash
 set -e
 
-# JupyterHub single-user 用
+# JupyterHub
 pip install --no-cache-dir jupyterhub==5.2.1
 
-# Jupyter基本環境
+# Jupyter
 pip install --no-cache-dir notebook jupyterlab
 
-# LC / meme 系は存在確認後に入れる
-# pip install lc_wrapper lc_cell_meme
+# ===== LCログ（ここが追加）=====
+pip install --no-cache-dir ipython
 
-echo "=== CHECK ==="
-which python || true
-which jupyterhub-singleuser || true
-jupyterhub-singleuser --version || true
+mkdir -p /srv/conda/envs/notebook/etc/ipython/startup
+
+cat > /srv/conda/envs/notebook/etc/ipython/startup/00-log.py <<'PY'
+import os, datetime
+
+log_dir = os.path.expanduser("~/.log")
+os.makedirs(log_dir, exist_ok=True)
+
+log_file = os.path.join(log_dir, "exec.log")
+
+def pre_run_cell(info):
+    with open(log_file, "a") as f:
+        f.write(f"\n=== {datetime.datetime.now()} ===\n")
+        f.write(info.raw_cell + "\n")
+
+ip = get_ipython()
+if ip:
+    ip.events.register('pre_run_cell', pre_run_cell)
+PY
+
+echo "LC logger installed"
