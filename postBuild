@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+# JupyterHub single-user 用
+pip install --no-cache-dir jupyterhub==5.2.1
+
+# Jupyter基本環境
+pip install --no-cache-dir notebook jupyterlab
+
+# LC / meme 系は存在確認後に入れる
+# pip install lc_wrapper lc_cell_meme
+
+echo "=== CHECK ==="
+which python || true
+which jupyterhub-singleuser || true
+jupyterhub-singleuser --version || true
