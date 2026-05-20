@@ -3,7 +3,8 @@ import os, uuid, pickle
 
 from pathlib import Path
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+JST = timezone(timedelta(hours=9), 'JST')
 
 SERVER_SIGNATURE = str(uuid.uuid1())
 
@@ -19,11 +20,11 @@ def _log_cell(result):
 
         cwd = Path.cwd()
 
-        logdir = cwd / ".log" / datetime.now(timezone.utc).strftime("%Y%m%d")
+        logdir = cwd / ".log" / datetime.now(JST).strftime("%Y%m%d")
 
         logdir.mkdir(parents=True, exist_ok=True)
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(JST)
 
         base = now.strftime("%Y%m%d-%H%M%S-") + f"{now.microsecond//1000:04d}"
 
@@ -49,13 +50,13 @@ def _log_cell(result):
 
             f.write(f"gid: {os.getgid()}\n")
 
-            f.write(f"start time: {now.strftime('%Y-%m-%d %H:%M:%S')}(UTC)\n")
+            f.write(f"start time: {now.strftime('%Y-%m-%d %H:%M:%S')}(JST)\n")
 
             f.write("----\n\n")
 
             f.write("----\n")
 
-            f.write(f"end time: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')}(UTC)\n")
+            f.write(f"end time: {datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')}(JST)\n")
 
             f.write("0 chunks with matched keywords or errors\n")
 
