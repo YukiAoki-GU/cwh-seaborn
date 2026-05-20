@@ -162,6 +162,11 @@ if [ "$(id -u)" == 0 ] ; then
     # NOTE: This hook is run as the root user!
     run-hooks /usr/local/bin/before-notebook.d
 
+    # Enable JupyterLab as default UI
+    export JUPYTERHUB_SINGLEUSER_APP='jupyter_server.serverapp.ServerApp'
+    export JUPYTER_ENABLE_LAB=yes
+    export JUPYTERHUB_DEFAULT_URL=/lab
+
     # Install LC logger into the runtime user's IPython startup directory
     if [[ -f /home/jovyan/hooks/00_lc_logger.py ]]; then
         mkdir -p "/home/${NB_USER}/.ipython/profile_default/startup"
